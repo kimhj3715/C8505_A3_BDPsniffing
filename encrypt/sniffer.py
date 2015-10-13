@@ -74,5 +74,6 @@ def test_outgoing_callback(src, dst, frame):
     print("outgoing - src=%s, dst=%s, frame len = %d"
         %(socket.inet_ntoa(src), socket.inet_ntoa(dst), len(frame)))
  
-ip_sniff = IPSniff('eth3', test_incoming_callback, test_outgoing_callback)
+ip_sniff = IPSniff('eno1', test_incoming_callback, test_outgoing_callback)
 ip_sniff.recv()
+
