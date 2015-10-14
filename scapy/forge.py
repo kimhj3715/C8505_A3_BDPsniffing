@@ -3,12 +3,14 @@ from scapy.all import *
 
 mypacket = IP()
 mypacket.show()
+mypacket.src = "192.168.0.9"
+mypacket.dst = "192.168.0.8"
 print mypacket.src
 
 print ""
 
 # slack of an IP and TCP packet
-packet = mypacket/TCP()
+packet = mypacket/fuzz(TCP())
 packet.show()
 
 # manipulate TCP parameters

