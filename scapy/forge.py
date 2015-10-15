@@ -21,17 +21,21 @@ for c in user_input:
 	print c
 	a_input.append(ord(c))
 
+
+
+
+# create a forged packet with the data
+for i in a_input:
+	# put random values in IP and TCP header
+	packet = fuzz(mypacket)/fuzz(TCP())
+	# set destination port to 80 
+	packet[TCP].dport = 80
+	#packet[TCP].flag = 
+	# manipulate "Type of Service" field of IP header
+	packet.id = i
+	print "[sent] ", str(unichr(i))
+	# send packet
+	#packet.show()
+	send(packet)
+
 print a_input
-
-
-# 
-
-# manipulate "Type of Service" field of IP header
-packet.tos = a_input
-# put random values in IP and TCP header
-packet = fuzz(mypacket)/fuzz(TCP())
-# set destination port to 80 
-packet[TCP].dport = 80
-
-# send packet
-send(packet)
