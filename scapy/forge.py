@@ -1,32 +1,37 @@
 # forged packet
 from scapy.all import *
 
+# global variables
+a_input = []
+user_input = []
+
+
 mypacket = IP()
-mypacket.show()
 mypacket.src = "192.168.0.9"
 mypacket.dst = "192.168.0.8"
-print mypacket.src
-
-print ""
-
-# slack of an IP and TCP packet
-packet = mypacket/fuzz(TCP())
-packet.show()
-
-# manipulate TCP parameters
-packet.ttl = 10
-packet[TCP].sport = 30
-
-packet.show()
 
 
-# to add payload to this packet, use the operator /
-packet = packet/"GET HTTP/1.1\r\n\r\n"
-packet.show()
+
+
+user_input = raw_input("# ")
+
+# encrypt the message first
+
+for c in user_input:
+	print c
+	a_input.append(ord(c))
+
+print a_input
+
+
+# 
+
+# manipulate "Type of Service" field of IP header
+packet.tos = a_input
+# put random values in IP and TCP header
+packet = fuzz(mypacket)/fuzz(TCP())
+# set destination port to 80 
+packet[TCP].dport = 80
 
 # send packet
 send(packet)
-# packet[TCP].dport = (20, 30)
-# [p for p in packet[TCP]]
-# packet.show()
-# send(IP(dst="192.168.1.9")/ICMP())
