@@ -38,7 +38,7 @@ def change_proc():
 
 
 def recv_packet(pkt):
-	print pkt[TCP].id 
+	print pkt[IP].id 
 
 
 def main():
