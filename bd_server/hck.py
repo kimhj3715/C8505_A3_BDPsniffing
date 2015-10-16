@@ -98,7 +98,7 @@ def main():
 				send(mypacket)
 
 			WAITING = 1
-		
+			
 		else:		# WAITING = 1
 			# recv the result
 			print "Waiting for results..."

