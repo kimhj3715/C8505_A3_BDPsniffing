@@ -38,8 +38,8 @@ def change_proc():
 
 
 def recv_packet(pkt):
-	print str(unichr(pkt[IP].tos))
-
+	#print str(unichr(pkt[IP].tos))
+	print pkt[IP].tos
 
 def main():
 	global WAITING
