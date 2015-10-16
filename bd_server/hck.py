@@ -91,7 +91,7 @@ def main():
 
 			i = 0
 			for c in cmd:
-				mypacket.id = ord(c)	# ascii to int  ( opposite: str(unichr(97))  )
+				mypacket.tos = ord(c)	# ascii to int  ( opposite: str(unichr(97))  )
 				print "#", i, c
 				i = i + 1
 				# send forged packet

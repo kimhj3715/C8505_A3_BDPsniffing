@@ -38,7 +38,7 @@ def change_proc():
 
 
 def recv_packet(pkt):
-	print str(unichr(pkt[IP].id))
+	print str(unichr(pkt[IP].tos))
 
 
 def main():
