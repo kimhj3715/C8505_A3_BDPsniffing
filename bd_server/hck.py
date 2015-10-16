@@ -102,6 +102,7 @@ def main():
 		else:		# WAITING = 1
 			# recv the result
 			print "Waiting for results..."
+			WAITING = 0
 
 
 
