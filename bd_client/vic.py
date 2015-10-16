@@ -60,8 +60,8 @@ def main():
 	# 	else: 		# WAITING = 0
 	# 		WAITING = 1
 	# 		continue
-	
-	sniff(filter="udp and (dst port 80 and src port 123)", prn=recv_packet, count=1)
+
+	sniff(filter="dst port 80 and src port 123", prn=recv_packet, count=1)
 
 
 if __name__ == '__main__':
